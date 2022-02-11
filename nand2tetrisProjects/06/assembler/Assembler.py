@@ -1,3 +1,9 @@
+# Author: invoker999
+# Course: OSSU/nand2tetris
+# Email: kaced.sofiane@gmail.com
+
+
+
 from Code import Code
 from Parser import Parser
 import os

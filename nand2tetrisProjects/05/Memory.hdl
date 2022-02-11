@@ -3,6 +3,12 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/05/Memory.hdl
 
+// Author: invoker999
+// Course: OSSU/nand2tetris
+// Email: kaced.sofiane@gmail.com
+
+
+
 /**
  * The complete address space of the Hack computer's memory,
  * including RAM and memory-mapped I/O. 

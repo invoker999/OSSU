@@ -1,7 +1,10 @@
 '''
 Created on Feb 16, 2019
 
-@author: Inovker
+Author: invoker999
+Course: OSSU/nand2tetris
+Email: kaced.sofiane@gmail.com
+
 '''
 
 from JackTokenizer import jackTokenizer

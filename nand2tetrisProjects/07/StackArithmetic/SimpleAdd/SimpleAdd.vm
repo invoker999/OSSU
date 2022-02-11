@@ -3,6 +3,10 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/07/StackArithmetic/SimpleAdd/SimpleAdd.vm
 
+// Author: invoker999
+// Course: OSSU/nand2tetris
+// Email: kaced.sofiane@gmail.com
+
 // Pushes and adds two constants.
 push constant 7
 push constant 8

@@ -1,5 +1,11 @@
 /** Represent one cell of the game "Mines"**/
 
+// Author: invoker999
+// Course: OSSU/nand2tetris
+// Email: kaced.sofiane@gmail.com
+
+
+
 class Cell{
 	field int status; // 0 Neutral, 1 flag, 2: question, 3 clicked.
 	field int data; // 0-8 number of bombs around  or itself is a bomb = 9 

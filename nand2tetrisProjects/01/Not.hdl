@@ -2,6 +2,11 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/01/Not.hdl
+//
+// Author: invoker999
+// Corse: OSSU/nand2tetris
+// Email: kaced.sofiane@gmail.com
+
 
 /**
  * Not gate:

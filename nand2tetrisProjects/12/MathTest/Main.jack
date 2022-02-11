@@ -3,6 +3,11 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/MathTest/Main.jack
 
+//Author: invoker999
+//Course: OSSU/nand2tetris
+//Email: kaced.sofiane@gmail.com
+
+
 /** Test program for the OS Math class. */
 class Main {
 

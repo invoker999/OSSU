@@ -1,7 +1,9 @@
+// Author: invoker999
+// Course: OSSU/nand2tetris
+// Email: kaced.sofiane@gmail.com
+
 //The first program was not elgant so making a second version
-
 // C instructions des = comp; jump
-
 // A instruction @Value   A = Value
 
 	@WHITE

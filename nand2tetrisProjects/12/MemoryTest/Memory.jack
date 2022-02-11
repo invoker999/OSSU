@@ -3,6 +3,11 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/Memory.jack
 
+//Author: invoker999
+//Course: OSSU/nand2tetris
+//Email: kaced.sofiane@gmail.com
+
+
 /**
  * This library provides two services: direct access to the computer's main
  * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM

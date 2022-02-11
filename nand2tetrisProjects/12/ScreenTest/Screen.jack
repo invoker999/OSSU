@@ -3,6 +3,10 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/Screen.jack
 
+//Author: invoker999
+//Course: OSSU/nand2tetris
+//Email: kaced.sofiane@gmail.com
+
 /**
  * A library of functions for displaying graphics on the screen.
  * The Hack physical screen consists of 512 rows (indexed 0..511, top to bottom)

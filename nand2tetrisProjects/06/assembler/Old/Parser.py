@@ -1,3 +1,8 @@
+# Author: invoker999
+# Course: Nand2tetris
+# Email: kaced.sofiane@gmail.com
+
+
 import os
 import io
 

@@ -3,6 +3,12 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/Math.jack
 
+//Author: invoker999
+//Course: OSSU/nand2tetris
+//Email: kaced.sofiane@gmail.com
+
+
+
 /**
  * A library of commonly used mathematical functions.
  * Note: Jack compilers implement multiplication and division using OS method calls.

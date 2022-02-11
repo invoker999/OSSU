@@ -1,9 +1,10 @@
 '''
 Created on Feb 27, 2019
 
-@author: Inovker
 
-@version : 1.0.0
+Author: invoker999
+Course: OSSU/nand2tetris
+Email: kaced.sofiane@gmail.com
 
 '''
 

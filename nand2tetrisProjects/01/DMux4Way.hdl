@@ -2,7 +2,10 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/01/DMux4Way.hdl
-
+//
+// Author: invoker999
+// Course: OSSU/nand2tetris
+// Email: kaced.sofiane@gmail.com
 /**
  * 4-way demultiplexor:
  * {a, b, c, d} = {in, 0, 0, 0} if sel == 00

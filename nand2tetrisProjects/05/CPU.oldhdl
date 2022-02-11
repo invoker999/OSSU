@@ -3,6 +3,12 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/05/CPU.hdl
 
+// Author: invoker999
+// Course: OSSU/nand2tetris
+// Email: kaced.sofiane@gmail.com
+
+
+
 /**
  * The Hack CPU (Central Processing unit), consisting of an ALU,
  * two registers named A and D, and a program counter named PC.

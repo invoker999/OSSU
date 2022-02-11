@@ -19,6 +19,10 @@
 //do (END)
 //while(TRUE)
 
+// Author: invoker999
+// Course: OSSU/nand2tetris
+// Email: kaced.sofiane@gmail.com
+
 //Start of program:
      // init
         @R2   

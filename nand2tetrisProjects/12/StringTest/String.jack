@@ -3,6 +3,10 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/String.jack
 
+//Author: invoker999
+//Course: OSSU/nand2tetris
+//Email: kaced.sofiane@gmail.com
+
 /**
  * Represents character strings. In addition for constructing and disposing
  * strings, the class features methods for getting and setting individual

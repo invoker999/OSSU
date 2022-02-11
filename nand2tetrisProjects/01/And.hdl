@@ -2,7 +2,10 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/01/And.hdl
-
+//
+// Author: invoker999
+// Course: OSSU/nand2tetris
+// Email: kaced.sofiane@gmail.com
 /**
  * And gate: 
  * out = 1 if (a == 1 and b == 1)
