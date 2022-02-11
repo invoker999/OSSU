@@ -1,0 +1,48 @@
+/** Represent one cell of the game "Mines"**/
+
+class Cell{
+	field int status; // 0 Neutral, 1 flag, 2: question, 3 clicked.
+	field int data; // 0-8 number of bombs around  or itself is a bomb = 9 
+	field int raw , column ; // i = raw number , j = column number
+	// construct a new Cell object 
+	constructor Cell new( ){  
+		let data = type;
+		let status = 0;
+		return this;
+		}
+
+	method int getStatus(){  // getter for status
+		return status;
+		}
+	
+	method int getData(){    // getter for data
+		return data;
+		}
+		
+	// Reacts to user click and change cell status accordingly return false if it's a bomb and game over
+	method void click(){
+		let status = 3;
+		
+	}
+	//change status to flag if cell is active
+	method void flag(){
+			let status = 2;	
+		return;
+	}
+	//change status to question if cell is active
+	method void question(){
+			let status = 2;	
+		return;
+	}
+	
+	//called by neighboring clicked cell...also throws a trigger if it is an empty cell
+	method void trigger(){
+		if (data < 9){
+			let status = 3;
+
+
+		
+		
+		
+		
+	       

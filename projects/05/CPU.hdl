@@ -1,0 +1,130 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/CPU.hdl
+
+/**
+ * The Hack CPU (Central Processing unit), consisting of an ALU,
+ * two registers named A and D, and a program counter named PC.
+ * The CPU is designed to fetch and execute instructions written in 
+ * the Hack machine language. In particular, functions as follows:
+ * Executes the inputted instruction according to the Hack machine 
+ * language specification. The D and A in the language specification
+ * refer to CPU-resident registers, while M refers to the external
+ * memory location addressed by A, i.e. to Memory[A]. The inM input 
+ * holds the value of this location. If the current instruction needs 
+ * to write a value to M, the value is placed in outM, the address 
+ * of the target location is placed in the a"
+ddressM output, and the 
+ * writeM control bit is asserted. (When writeM==0, any value may 
+ * appear in outM). The outM and writeM outputs are combinational: 
+ * they are affected instantaneously by the execution of the current 
+ * instruction. The addressM and pc outputs are clocked: although they 
+ * are affected by the execution of the current instruction, they commit 
+ * to their new values only in the next time step. If reset==1 then the 
+ * CPU jumps to address 0 (i.e. pc is set to 0 in next time step) rather 
+ * than to the address resulting from executing the current instruction. 
+ */
+
+CHIP CPU {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write to M? 
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+    // ''A'' register contorl logic...
+	//.................................................................................................
+        Mux16(a[0..14] = instruction[0..14], a[15] = false, b = ALUout, sel = instruction[15], out = InA);
+    	Not(in = instruction[15], out = NotInst15);
+    	And(a = instruction[15], b=instruction[5], out = Inst5AndInst15);
+        Or(a = NotInst15, b = Inst5AndInst15, out = LA);
+        ARegister(in = InA, load = LA, out = Aout, out[0..14] = addressM);
+        //.................................................................................................
+
+   // ''D'' register control logic...
+        //..........................................................
+   	And(a = instruction[4], b = instruction[15], out = LD);
+	DRegister(in = ALUout, load = LD, out = D);
+        //..........................................................
+
+   //"Memory Write, lol I fucking forgot that one"
+       //...........................................................
+       And(a = instruction[15], b = instruction[3], out = writeM);
+
+   // "ALU" Control Logic...
+//......................................................................................................................................................
+   	// X logic...
+	And(a = instruction[12], b = instruction[15], out = selAM);
+	Mux16(a = Aout, b = inM, sel = selAM, out = AorM);
+
+	//Y logic
+	   // Nothing to do here Y of ALU is always D register
+	
+	//LAU connection
+ALU(x=D,y=AorM,zx=instruction[11],nx=instruction[10],zy=instruction[9],ny=instruction[8],f=instruction[7],no=instruction[6],out=ALUout,out=outM,zr=ZR,ng=NG);
+//......................................................................................................................................................
+
+   
+   //"PC counter logic control".................. J1[2] J2[1] J3[0]
+      Not(in = instruction[2], out = J1b);  
+      Not(in = instruction[1], out = J2b);
+      Not(in = instruction[0], out = J3b);
+      Not(in = NG, out = NGb);
+      Not(in = ZR, out = ZRb); 
+   
+   //"JMP"..........
+      And(a = instruction[2], b = instruction[1], out = J1J2);
+      And(a = instruction[0], b = J1J2, out = JMP);
+      //............... 
+
+   //"JGT"..........
+      And(a = J1b, b = J2b, out = J1bJ2b);
+      And(a = NGb, b = ZRb, out = NGbZRb);
+      And(a =J1bJ2b, b = instruction[0], out = J1bJ2bJ3);
+      And(a =J1bJ2bJ3, b = NGbZRb, out = JGT);
+
+   //"JEQ".........
+      And(a = J1b, b = instruction[1], out = J1bJ2);
+      And(a = J3b, b = ZR, out = J3bZR);
+      And(a =J1bJ2, b =J3bZR, out = JEQ);
+   
+   //"JGE".........
+      // J1bJ2
+      And(a = instruction[0], b = NGb, out = J3NGb);
+      And(a = J1bJ2, b = J3NGb, out = JGE);
+
+   //"JLT".........
+      And(a = instruction[2], b = J2b, out =J1J2b);
+      And(a = J3b, b = NG, out = J3bNG);
+      And(a = J1J2b, b = J3bNG, out = JLT);
+   
+   //"JNE".........
+      And(a = instruction[0], b = ZRb, out =J3ZRb);
+      And(a = J1J2b, b = J3ZRb, out = JNE);
+
+   //"JLE".........
+      Or(a = NG, b = ZR, out = NGorZR);
+      And(a = J1J2, b = J3b, out = J1J2J3b);
+      And(a = J1J2J3b, b = NGorZR, out = JLE);
+
+   //Compute PCL from ORing all the JUMPs
+      Or8Way(in[0]=JMP,in[1]=JGT, in[2]=JEQ,in[3]=JGE,in[4]=JLT,in[5]=JNE,in[6]=JLE,in[7]=false,out = PCL);
+
+   //"PC load = PCL"//
+   And(a = PCL, b = instruction[15], out = PCLconfirmed); //check if the calculration were made on C-instruction or and A-instruction 
+   
+   //"PC inc"//
+   Or(a = PCLconfirmed, b = reset, out = notIncPC);
+   Not(in = notIncPC, out = incPC);
+
+   //"PC connexion"//
+   PC(in = Aout,load = PCLconfirmed, inc =incPC, reset=reset, out[0..14] = pc);
+}

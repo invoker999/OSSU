@@ -1,0 +1,27 @@
+
+class Main {
+
+   function void main(){
+		var int i ;
+		var Array j;
+		var Array a;
+		var Array grid;
+		
+		let grid = Array.new(8);
+		do Output.printString("Hellow world");
+		do Output.println();
+		
+		let i = 0; let j = 0;	
+		while (i < 8){
+			let grid[i] = Array.new(3);
+			let i = i + 1;}
+			
+		let j = grid[0];
+		let j[0] = 666;
+		let a = grid[0];
+		do Output.printInt(a[0]);
+		do Output.printString("Done!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		
+		return;
+	}
+}

@@ -1,0 +1,211 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Keyboard.jack
+
+/**
+ * A library for handling user input from the keyboard.
+ */
+class Keyboard {
+	
+	static int keyboard;
+    /** Initializes the keyboard. */
+    function void init() {
+		let keyboard = 24576;  //Memory.peek/poke(keyboard) will give access to keyboard key 
+		return; 
+    } 
+
+    /**
+     * Returns the character of the currently pressed key on the keyboard;
+     * if no key is currently pressed, returns 0.
+     *
+     * Recognizes all ASCII characters, as well as the following keys:
+     * new line = 128 = String.newline()
+     * backspace = 129 = String.backspace()
+     * left arrow = 130
+     * up arrow = 131
+     * right arrow = 132
+     * down arrow = 133
+     * home = 134
+     * End = 135
+     * page up = 136
+     * page down = 137
+     * insert = 138
+     * delete = 139
+     * ESC = 140
+     * F1 - F12 = 141 - 152
+     */
+    function char keyPressed() {
+		
+		//will be zero if no key is pressed
+		return Memory.peek(keyboard); 
+		
+    }
+
+    /**								
+     * Waits until a key is pressed on the keyboard and released,
+     * then echoes the key to the screen, and returns the character 
+     * of the pressed key.
+     */
+    function char readChar() {
+		var int c;
+		//display the cursor Update call to Output.displayCursor()
+		
+		while (Keyboard.keyPressed() = 0){	
+			//do nothing wait for a key press
+		}
+		
+		let c = Keyboard.keyPressed();
+		
+		while(~(Keyboard.keyPressed()=0)){
+			//do nothing wait for a key release 
+		}
+		
+		//display c at the current cursor location
+		if((~(c = String.newLine()))&(~(c = String.backSpace()))){
+			do Output.printChar(c);
+		}
+		
+		//return char
+		return c; 
+    }
+
+    /**								
+     * Displays the message on the screen, reads from the keyboard the entered
+     * text until a newline character is detected, echoes the text to the screen,
+     * and returns its value. Also handles user backspaces.
+     */
+    function String readLine(String message) {
+		//str = new string 
+		var String str,strTemp, i; 
+		var int c,maxLength; 
+		            
+		let maxLength = 10;
+		let str = String.new(maxLength); 
+
+		
+		
+		//displays the message on the screen
+		do Output.printString(message); 
+		
+		
+		while( true ){
+			let c = Keyboard.readChar();
+			
+			//if char is a new line sting was completely entered  
+			if(c = String.newLine()){
+				//echo a new line
+				do Output.println();
+				return str; 
+			}
+			
+			else {
+				if (c = String.backSpace()){
+					//echo a backspace
+					do Output.backSpace();
+					do str.eraseLastChar();
+					}
+				else {
+					if (maxLength = str.length()){
+						//creat a temp string of size maxLength + 10
+						let maxLength = maxLength + 10; 
+						let strTemp = String.new(maxLength);	
+
+						//copy char read so fare in str to strTemp 
+						let i = 0; 
+						while	( i < str.length()){
+							do strTemp.appendChar(str.charAt(i)); 
+							let i = i + 1; 
+						}
+						//dispose of str and set it to point to strTemp 
+						do str.dispose(); 
+						let str = strTemp;
+			
+						//set strTemp to point to null or -1 
+						let strTemp = -1; 
+					}
+					
+					let str = str.appendChar(c);
+				}
+			}
+		}
+	return str; 
+	}		
+
+    /**								
+     * Displays the message on the screen, reads from the keyboard the entered
+     * text until a newline character is detected, echoes the text to the screen,
+     * and returns its integer value (until the first non-digit character in the
+     * entered text is detected). Also handles user backspaces. 
+     */
+    function int readInt(String message) {
+				//str = new string 
+		var int value, c,digitCount;
+		var boolean positive;
+		
+		//displays the message on the screen
+		do Output.printString(message); 
+		
+		//init value to 0 
+		let value = 0;
+		let digitCount = 0;   //update to keep track of sign 
+		let positive = true;
+
+		while( true ){
+			let c = Keyboard.readChar();
+			
+			//handle sign first
+			//if it is a sign and no digit are entred yet save it and read next char  
+			if(((c = 43) | ( c = 45))&(digitCount = 0)){
+				if(c=45){
+					let positive = false; 
+				}
+				else {
+					let positive = true; 
+				}
+				//Advance to read the next char 
+				let c = Keyboard.readChar(); 
+				let digitCount = digitCount +1;  //count the sign as a digit to keep to track of backSpace to change sign 
+			}
+			//if char is not a digit print a new line and return   
+			if(((c = String.newLine()) | (c < 48) | (c > 57)) & (~(c = String.backSpace()))){
+				//echo a new line
+				do Output.println();
+				if(positive){
+					return value;
+				}
+				else{
+					return -value; 
+				}
+			}
+			
+			else {
+				if (c = String.backSpace()){
+					//echo a backspace
+					do Output.backSpace();
+					//save how many digit were entered to handle sign
+					//condition to avoid many backspaces in thin air (Fuck we need to think of all the dumbest people out there) 
+					if (digitCount > 0){
+						let digitCount = digitCount -1; 
+					}
+					//chop-off last digit from value 
+					let value = value/10; 
+
+					}
+				else {
+					
+					//add new digit to value
+					let value = (10*value) + (c - 48);  //(c - 48) return the digit equivalent to the char 
+					let digitCount = digitCount +1;     //save how many digit were entered to handle sign 
+				}
+			}
+		//moved reading char at the end to be able to handle the signe efficiently 
+	
+		}
+		
+    //unreachable, just used to shut the warnings of the compiler 
+	return 0; 
+	}
+		
+}
+

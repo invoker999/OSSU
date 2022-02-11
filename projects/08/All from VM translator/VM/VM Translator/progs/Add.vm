@@ -1,0 +1,5 @@
+//hello this is a comment
+//nice it working
+push constant 7 //hello again it's me
+push constant 8
+add
