@@ -1,0 +1,323 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Screen.jack
+
+/**
+ * A library of functions for displaying graphics on the screen.
+ * The Hack physical screen consists of 512 rows (indexed 0..511, top to bottom)
+ * of 256 pixels each (indexed 0..255, left to right). The top left pixel on 
+ * the screen is indexed (0,0).
+ */
+class Screen {
+	
+	static Array screen,twoToThe;
+	static boolean color; 
+	
+
+    /** Initializes the Screen. */
+    function void init() {
+		var int i, n;
+	
+		//Init screen vriables
+		let color = true;
+		let screen = 16384;
+		
+
+		//Creat twoToThe[i] array to simplify pixel drawing 
+		let twoToThe = Array.new(16);
+		let n = 1;
+		let i = 0;
+		
+		while (i < 16){
+			
+			let twoToThe[i] = n;
+			let n = n + n;
+			let i = i + 1;
+		}
+		
+		return;
+    }
+
+    /** Erases the entire screen. */
+    function void clearScreen(){ 
+		var int pixelWord;
+		
+		let pixelWord = 0;
+		//Iterate through all pixels to erase them, (set them to false)
+		while (pixelWord < 8192) {
+			let screen[pixelWord] = false;	
+			let pixelWord = pixelWord + 1;
+		
+		return;
+		}
+    }
+    /** Sets the current color, to be used for all subsequent drawXXX commands.
+     *  Black is represented by true, white by false. */
+    function void setColor( boolean b) {
+	
+		let color = b; 
+		return;
+    }
+
+    /** Draws the (x,y) pixel, using the current color. */
+    function void drawPixel( int x, int y) {
+		var int address,cur_Color, bit,mask;
+		
+		//Avoid overflow off screen to other section of ram
+		if ((~(x<256))&(~(y<512))){
+			return; 
+		}
+		//Find the address of the word holding the pixel (x,y)
+		let address = (32*y) + (x/16);
+		
+		//retrieve the current color not to earase other pixels 
+		let cur_Color = screen[address];
+		
+		//find the bit number of the pixel
+		let bit = x - (16*(x/16));
+		
+		//set the mask according to address and current setColor
+		let mask = twoToThe[bit];
+		
+		//if color is black set the desired bit to one by applying and "OR" with the mask, else set the bit to zero by applying an "AND" with the negative mask
+		//Write back the the pixels with the updated pixel desired color
+		if (color){
+			let screen[address] = cur_Color | mask;
+		}
+		else {
+			let screen[address] = cur_Color & (~ mask);
+		}
+	
+		return;
+    }
+
+    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+    function void drawLine( int x1, int y1, int x2, int y2) {
+	
+		var int dx, dy, a, b, diff,tempV,pixel,n;
+		
+		let dx = x2 - x1; 
+		let dy = y2 - y1; 
+		let a = 0; 
+		let b = 0;
+		let diff = 0; 
+		
+		//Horizontal Lines -----------------------------------------------------------------------------------------
+		if (dy = 0){
+			if (dx < 0){
+				let dx = -dx;   //reverse line drawing if dx is negative 
+				
+				//interchange the starting and ending of line
+					//x1 = x2 , x2 = x1  /  y1 == y2 (no need to change)
+				let tempV = x1; 
+				let x1 = x2;
+				let x2 = tempV; 
+				
+			}
+			
+			
+			// draw line pixel per pixel
+				while (x1 < (x2 + 1)){
+					do Screen.drawPixel(x1,y1);
+					let x1 = x1 + 1;	
+				}
+				
+			return;
+			}
+			
+			/**
+			//draw a fast line as it is Horizontal    x1--(n<16bit)--a------------(N*16)----------------b--(n<16bit)--x2
+			//calculate a and b 
+			let a = (16*(x1/16)) + 1; //a is next 16bit word after x1
+			let b = (16*(x2/16)) + 0; //b is the previous 16bit before x2
+			
+			//if (a >= b) then draw line pixel per pixel as there is not enough space between a and b to draw word by word
+			if ( (b>a)){
+				while (x1 < (x2 + 1)){
+					do Screen.drawPixel(x1,y1);
+					let x1 = x1 + 1;	
+				}
+			
+			return;
+			}
+			
+			else {
+				//draw segment from x1 to a 
+				while ( x1 < (a*16)){
+					do Screen.drawPixel(x1,y1);
+					let x1 = x1 + 1;
+				}	
+				//draw segment from a to b 
+				while ( a < b ) {     
+					let screen[(y1*32) + a] = color; 
+					let a = a + 1; 
+				}	
+			    //draw segment from x2 to b  
+				while ( x2 > ((b*16)-1)){          // x2>= (b*16)
+					do Screen.drawPixel(x2, y1);  //same y1 = y2 
+					let x2 = x2 - 1; 	
+				}
+				
+			return; 
+			} 
+			
+		}*/
+		
+		//Vertical Lines --------------------------------------------------------------------------------------------------------
+		if (dx = 0){
+			
+			//revers the line drawing to always draw from top of the screen to down 
+			if (dy < 0){
+				
+				let dy = -dy;   //reverse line drawing if dy is negative 
+				
+				//interchange the starting and ending of line
+					//y1 <=> y2  /  x1 == x2 (no need to change)
+				let tempV = y1; 
+				let y1 = y2;
+				let y2 = tempV; 
+			}
+	
+			//while y1 <= y2  draw vertical line at x1 or x2 from y1 to y2 
+			while ( y1 < (y2+1)){
+				do Screen.drawPixel(x1,y1);
+				let y1 = y1 + 1; 
+			}
+		
+		return;
+		}
+		
+		//Line to DOWN-RIGHT ----------------------------------------------------------------------------------------------------------
+		if (((dx>0)&(dy>0))|((dx<0)&(dy<0))){
+		
+			//reverse the line form UP-LEFT to DOWN-RIGHT
+			if ((dx<0)&(dy<0)){
+				
+				//reverse (x1,y1) with (x2,y2) and change signe for dx and dy
+				let dx = -dx;
+				let dy = -dy;
+				let tempV = x1;
+				let x1 = x2;
+				let x2 = x1; 
+				let tempV = y1;
+				let y1 = y2;
+				let y2 = tempV;	
+			}
+			
+			while ((a <(dx+1)) & (b < (dy+1) )){
+				
+				do Screen.drawPixel(x1+a,y1+b);
+				
+				//decide if to go DOWN or RIGHT
+				if(diff<0){
+					let a = a+1; 
+					let diff = diff+dy;
+				}
+				else{ 
+					let b = b+1; 
+					let diff = diff-dx; 
+				}
+			}
+		return;
+		}
+		
+		//Line DOWN-LEFT --------------------------------------------------------------------------------------------------------------
+		if (((dx<0)&(dy>0))|((dx>0)&(dy<0))){
+			if((dx>0)&(dy<0)){
+				//revers the line to draw toward DOWN-LEFT 
+				let dx = -dx;
+				let dy = -dy;
+				let tempV = x1;
+				let x1 = x2;
+				let x2 = x1; 
+				let tempV = y1;
+				let y1 = y2;
+				let y2 = tempV;	
+			}
+			//dx had to be positive for this to work 
+			let dx = -dx;
+			while ((a <(dx+1)) & (b < (dy+1) )){
+				
+				do Screen.drawPixel(x1-a,y1+b);    //the only diff is the x1-a
+				
+				//decide if to go DOWN or RIGHT
+				if(diff<0){
+				
+					let a = a+1; 
+					let diff = diff+dy;
+				}
+				else{ 
+				
+					let b = b+1; 
+					let diff = diff-dx; //instead of -dx is +dx because dx is negative
+				}			
+			}
+			
+		return; 
+		}
+	return;
+	}
+	
+	
+    
+
+    /** Draws a filled rectangle whose top left corner is (x1, y1)
+     * and bottom right corner is (x2,y2), using the current color. */
+    function void drawRectangle( int x1, int y1, int x2, int y2) {
+		var int switch;
+		
+		if(x1>x2){
+			let switch = x1;
+			let x1 = x2;
+			let x2 = switch;
+		}
+		
+		if(y1>y2){
+			let switch = y1;
+			let y1 = y2;
+			let y2 = switch;
+		}
+		
+		while (y1 < (y2+1)){
+			
+			do Screen.drawLine(x1,y1,x2,y1);
+			let y1 = y1 + 1;
+			}
+		
+		
+	return;
+    }
+
+    /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
+    function void drawCircle(int x, int y, int r) {
+		var int dy,sq_r2_dy2;  //square root of r^2 - dy^2
+		
+		
+		//Special cases
+		//Limit the radius to 181 to avoid overflow of calculation. 
+		if (r>181){
+			let r = 181;
+		}
+		
+		if (r<0){
+			let r = -r;
+		}
+		
+		if (r = 0){
+			do Screen.drawPixel(x,y);
+			return;
+		}
+		
+		let dy = -r;
+		
+		while (dy<(r+1)){
+			let sq_r2_dy2 = Math.sqrt((r*r)-(dy*dy));
+			do Screen.drawLine((x - sq_r2_dy2),(y + dy),(x + sq_r2_dy2),(y + dy));
+			let dy = dy + 1; 
+		}
+		
+		return;
+    }
+//END of Class screen
+}
